@@ -20,7 +20,7 @@ pipeline {
             steps {
                 echo 'Validating HTML syntax using tidy'
                 // Install tidy.exe separately if not available in PATH
-                bat 'tidy -e index.html || echo "Tidy validation completed"'
+                 bat '"C:\\Program Files\\tidy 5.8.0\\tidy.exe" -e index.html || echo "Tidy validation completed"'
             }
         }
         stage('Deploy') {
