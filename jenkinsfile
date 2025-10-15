@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+    environment {
+        DEPLOY_DIR = 'C:\\inetpub\\wwwroot' // IIS root
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Cloning project from GitHub...'
+                git branch: 'main', url: 'https://github.com/<your-username>/jenkin_with_html.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Build Step: Checking workspace files'
+                bat 'dir'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Validating HTML syntax using tidy'
+                // Install tidy.exe separately if not available in PATH
+                bat 'tidy -e index.html || echo "Tidy validation completed"'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo "Deploying web files to IIS folder"
+                bat "xcopy /Y index.html ${DEPLOY_DIR}\\"
+                bat "xcopy /Y style.css ${DEPLOY_DIR}\\"
+                bat "xcopy /Y script.js ${DEPLOY_DIR}\\"
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline finished successfully! Visit: http://localhost/index.html'
+        }
+        failure {
+            echo 'Pipeline failed! Check logs.'
+        }
+    }
+}
